@@ -1,0 +1,34 @@
+class ChatGPTExtension {
+  getInfo() {
+    return {
+      id: "chatgpt",
+      name: "ChatGPT",
+      blocks: [
+        {
+          opcode: "askGPT",
+          blockType: Scratch.BlockType.REPORTER,
+          text: "ChatGPTに[TEXT]と聞く",
+          arguments: {
+            TEXT: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "こんにちは！",
+            },
+          },
+        },
+      ],
+    };
+  }
+
+  async askGPT(args) {
+    const res = await fetch("https://scratch-bot.masafy.org/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: args.TEXT }),
+    });
+
+    const data = await res.json();
+    return data.response || "エラーが発生しました";
+  }
+}
+
+Scratch.extensions.register(new ChatGPTExtension());
